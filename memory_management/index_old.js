@@ -92,4 +92,4 @@ var actual2 = memoryManager.read(pointer2);
 
 memoryManager.output();
 
-//console.log(array);
+console.log(array);
