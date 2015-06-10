@@ -41,6 +41,7 @@ MemoryManager.prototype.release = function(pointer){
  * @throws If pointer is in unallocated memory.
  */
 MemoryManager.prototype.read = function(pointer){
+	//check if pointer is mapped?
 	if (pointer >= this.memory.length) {
 		throw Error('unable to read');
 	}
