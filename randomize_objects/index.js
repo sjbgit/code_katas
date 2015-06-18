@@ -1,17 +1,19 @@
 
 Object.prototype.random = function() {
-	
+	var values = this.getAllValues();
+	return values[Math.floor(Math.random() * values.length)];
 };
 
 Object.prototype.toRandomArray = function() {
-	
+	var values = this.getAllValues();
+	for(var j, x, i = values.length; i; j = parseInt(Math.random() * i), x = values[--i], values[i] = values[j], values[j] = x);
+	return values;
 };
 
 
 
 Object.prototype.getAllValues = function() {
-	
-	
+		
 	var results = (function(input) {
 		
 		var values = [], objArr = [];
@@ -30,57 +32,14 @@ Object.prototype.getAllValues = function() {
 				values.push(element);
 			})
 
-			//values.push(element.getAllValues());
+			
 		});
 
 		return values;
 
-		/*
-		for (key in Object.keys(input)) {
-			console.log(input[key]);
-		}
-		*/
-		//console.log(keys);
-
-		/*
-		for (key in input){
-			console.log(input[key]);
-		}
-		*/
-
-	})(this);
-
-
-
-	return results;
-
-	//var objs = [];
-	
-	/*
-	var results = (function(input, objArr) {
 		
-
-		return Object.keys(input).map(function(x) {
-			
-			//return (typeof(input[x]) === 'object') ? input[x].getAllValues() : input[x];
-			if (typeof(input[x]) === 'object') {
-				objArr.push(input[x]);
-
-			}
-			else {
-				return input[x];
-			}
-			
-			
-		});
-
-	})(this, objs);
-
-	return results;
-	*/
-	
-	console.log('test');
-	
+	})(this);
+	return results;	 
 }
 
 Object.prototype.getAllValues1 = function() {
@@ -129,5 +88,31 @@ var obj1 = {
 };
  
 
- console.log(obj1.getAllValues());
+console.log(obj1.getAllValues());
 
+console.log(obj1.random());
+
+console.log(obj1.toRandomArray()); 
+
+
+
+
+Object.prototype.random = function() {
+  var values = this.getValues();
+  return values[Math.floor(Math.random() * values.length)]
+};
+
+Object.prototype.toRandomArray = function() {
+  var result = [], values = this.getValues();
+  while (values.length > 0) result.push(values.splice(Math.floor(Math.random() * values.length), 1)[0]);
+  return result;
+};
+
+Object.prototype.getValues = function () {
+  var values = [], self = this;
+  Object.keys(self).forEach(function (key) {
+    if (typeof self[key] == "object") values = values.concat(self[key].getValues());
+    else values.push(self[key]);
+  });
+  return values;
+}
