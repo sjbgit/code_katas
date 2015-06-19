@@ -16,7 +16,11 @@ function undoRedo(object) {
 
 	}
 
-	function deleteValue(obj, x, y) {
+	function deleteValue(obj, key, value) {
+		return function() {
+			//obj[key] = null;
+			delete obj[key];
+		}
 
 	}
 
@@ -65,7 +69,14 @@ function undoRedo(object) {
 		get: function(key) {
 			return currentObject[key];
 		},
-		del: function(key) {},
+		del: function(key) {
+
+			redoAction = deleteValue(currentObject, key, null);
+			undoAction = setValue(currentObject, key, currentObject[key]);
+			currentObject[key] = null;
+			console.log('del');
+
+		},
 		undo: function() {
 			//console.log(lastAction.toString());
 			undoAction.call(this, currentObject);
@@ -123,6 +134,26 @@ console.log(unRe.get('y'));
 
 })();
 
+
+(function(message) {
+
+	console.log(message);
+	var obj = { 'g': 10};
+
+
+
+	var unRe = new undoRedo(obj);
+	console.log(unRe.get('g'));
+	
+	unRe.del('g');
+	console.log(unRe.get('g'));
+
+	unRe.undo();
+	console.log('undone ' + unRe.get('g'));
+
+
+})('delete an property then undo and redo');
+
 console.log('---------------------');
 
 var x = {};
@@ -169,6 +200,14 @@ curryPartial({}, 'xprop', 88)();
 
 
 
+
+var delo = {
+	h: 123
+}
+
+delete delo['h'];
+
+console.log(delo['h']);
 
 
 
