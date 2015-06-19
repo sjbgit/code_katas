@@ -2,16 +2,21 @@
 function undoRedo(object) {
 
 	var currentObject = object;
-	var lastAction = null;
+	var undoAction = null;
+	var redoAction = null;
 
-	function setValue(obj, x, y) {
+	function setValue(obj, key, value) {
 		return function() {
 			console.log('ppppppppp');
-			console.log(obj, x, y);
-			obj[x] = y
+			console.log(obj, key, value);
+			obj[key] = value;
 			console.log(obj);
 			//return fn(x,y);
 		}
+
+	}
+
+	function deleteValue(obj, x, y) {
 
 	}
 
@@ -19,10 +24,11 @@ function undoRedo(object) {
 		set: function(key, value) {
 			//get old value and create a closure/curry function and set to last action
 			
-			if(currentObject[key]) {
+			//if(currentObject[key]) {
 				//lastAction = curryPartial(currentObject, key, currentObject[key]);
 				
-				lastAction = setValue(currentObject, key, currentObject[key]);
+				undoAction = setValue(currentObject, key, currentObject[key]);
+				redoAction = setValue(currentObject, key, value);
 
 				/*
 				lastAction = function() {
@@ -32,7 +38,7 @@ function undoRedo(object) {
 					
 				}
 				*/
-			}
+			//}
 
 			//lastAction = curryPartial(currentObject, key, value);
 			/*
@@ -61,10 +67,12 @@ function undoRedo(object) {
 		},
 		del: function(key) {},
 		undo: function() {
-			console.log(lastAction.toString());
-			lastAction.call(this, currentObject);
+			//console.log(lastAction.toString());
+			undoAction.call(this, currentObject);
 		},
-		redo: function() {}
+		redo: function() {
+			redoAction.call(this, currentObject);
+		}
 	};
 }
 
@@ -92,16 +100,22 @@ var obj = {
         y: 2
       };
 
+
+console.log('set to 10')
 var unRe = undoRedo(obj);
 unRe.set('y', 10);
-
 console.log(unRe.get('y'));
 
+console.log('set to 99')
 unRe.set('y', 99);
-
 console.log(unRe.get('y'));
 
+console.log('undo to 10')
 unRe.undo();
+console.log(unRe.get('y'));
+
+console.log('redo to 99')
+unRe.redo();
 console.log(unRe.get('y'));
 
 
