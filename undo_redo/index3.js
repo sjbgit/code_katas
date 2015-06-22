@@ -7,10 +7,10 @@ function undoRedo(object) {
 
 	function setValue(obj, key, value) {
 		return function() {
-			//console.log('ppppppppp');
+			console.log('ppppppppp');
 			console.log(obj, key, value);
 			obj[key] = value;
-			//console.log(obj);			
+			console.log(obj);			
 		}
 
 	}
@@ -23,10 +23,8 @@ function undoRedo(object) {
 	}
 
 	return {
-		set: function(key, value) {						
-			redoAction.push(setValue(currentObject, key, value));	
+		set: function(key, value) {			
 			undoAction.push(setValue(currentObject, key, currentObject[key]));		
-			//push undoAction
 			currentObject[key] = value;
 		},
 		get: function(key) {
@@ -35,68 +33,27 @@ function undoRedo(object) {
 		del: function(key) {		
 			undoAction.push(setValue(currentObject, key, currentObject[key]));
 			delete currentObject[key];
-			//console.log('del');
+			console.log('del');
 		},
 		undo: function() {
-			console.log('in undo');
+			
 			if (!undoAction.length > 0) {
 				throw Error('undo does not exist');
 			}
 
 			//get the action, then push it on to the redo and execute
 			var action = undoAction.pop()
-			console.log(action.toString())
-			//redoAction.push(action);
-			if (action) {
-				action.call(this, currentObject);
-			}
-			//action.call(this, currentObject);
+			redoAction.push(action);
+			action.call(this, currentObject);
 		},
 		redo: function() {
-			console.log('in redo');
-			var action = redoAction.pop();
-			if (action) {
-				action.call(this, currentObject); 
-			}
-			
+			redoAction.pop().call(this, currentObject); 
 		}
 	};
 }
 
-/*
-undoRedo.prototype.output = function() {
-	//console.log(this.currentObject);
-}
-*/
-(function() {
-	var obj = {
-        x: 1,
-        y: 2
-      };
-
-      var unRe = undoRedo(obj);
-      unRe.set('y', 10);
-
-      console.log(obj);
-
-      //set back to 2
-      unRe.undo();
-
-      console.log(obj);
-
-      //set back to 10
-      unRe.redo();
-
-      console.log(obj);
 
 
-
-      //unRe.output();
-      //unRe.undo();
-})();
-
-
-/*
 (function() {
 
 var obj = {

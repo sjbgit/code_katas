@@ -2,101 +2,93 @@
 function undoRedo(object) {
 
 	var currentObject = object;
-	var undoAction = [];
-	var redoAction = [];
+	var undoAction = null;
+	var redoAction = null;
 
 	function setValue(obj, key, value) {
 		return function() {
-			//console.log('ppppppppp');
+			console.log('ppppppppp');
 			console.log(obj, key, value);
 			obj[key] = value;
-			//console.log(obj);			
+			console.log(obj);
+			//return fn(x,y);
 		}
 
 	}
 
 	function deleteValue(obj, key, value) {
-		return function() {			
+		return function() {
+			//obj[key] = null;
 			delete obj[key];
 		}
 
 	}
 
 	return {
-		set: function(key, value) {						
-			redoAction.push(setValue(currentObject, key, value));	
-			undoAction.push(setValue(currentObject, key, currentObject[key]));		
-			//push undoAction
+		set: function(key, value) {
+			//get old value and create a closure/curry function and set to last action
+			
+			//if(currentObject[key]) {
+				//lastAction = curryPartial(currentObject, key, currentObject[key]);
+				
+				undoAction = setValue(currentObject, key, currentObject[key]);
+				redoAction = setValue(currentObject, key, value);
+
+				/*
+				lastAction = function() {
+					return function(obj) {
+						obj[key] = currentObject[key];
+					}
+					
+				}
+				*/
+			//}
+
+			//lastAction = curryPartial(currentObject, key, value);
+			/*
+			lastAction = function(obj, key, value) {
+				return function() {
+					console.log(obj, key, value);
+					obj[key] = value;
+				}
+			}
+			*/
+
 			currentObject[key] = value;
+
+			/*
+			if (currentObject[key]) {
+				lastAction = (function(obj, key, value) {
+					return function() {
+						obj[key] = value;
+					}					
+				})(currentObject, key, value);
+			}*/
+			//currentObject[key] = value;
 		},
 		get: function(key) {
 			return currentObject[key];
 		},
-		del: function(key) {		
-			undoAction.push(setValue(currentObject, key, currentObject[key]));
-			delete currentObject[key];
-			//console.log('del');
+		del: function(key) {
+
+			redoAction = deleteValue(currentObject, key, null);
+			undoAction = setValue(currentObject, key, currentObject[key]);
+			currentObject[key] = null;
+			console.log('del');
+
 		},
 		undo: function() {
-			console.log('in undo');
-			if (!undoAction.length > 0) {
-				throw Error('undo does not exist');
-			}
-
-			//get the action, then push it on to the redo and execute
-			var action = undoAction.pop()
-			console.log(action.toString())
-			//redoAction.push(action);
-			if (action) {
-				action.call(this, currentObject);
-			}
-			//action.call(this, currentObject);
+			//console.log(lastAction.toString());
+			undoAction.call(this, currentObject);
 		},
 		redo: function() {
-			console.log('in redo');
-			var action = redoAction.pop();
-			if (action) {
-				action.call(this, currentObject); 
-			}
-			
+			redoAction.call(this, currentObject);
 		}
 	};
 }
 
-/*
-undoRedo.prototype.output = function() {
-	//console.log(this.currentObject);
-}
-*/
-(function() {
-	var obj = {
-        x: 1,
-        y: 2
-      };
-
-      var unRe = undoRedo(obj);
-      unRe.set('y', 10);
-
-      console.log(obj);
-
-      //set back to 2
-      unRe.undo();
-
-      console.log(obj);
-
-      //set back to 10
-      unRe.redo();
-
-      console.log(obj);
 
 
-
-      //unRe.output();
-      //unRe.undo();
-})();
-
-
-/*
 (function() {
 
 var obj = {
@@ -110,8 +102,7 @@ unRe.set('x', 3);
 console.log(unRe.get('x'));
 
 
-})
-//();
+})();
 
 (function() {
 
@@ -141,10 +132,9 @@ console.log(unRe.get('y'));
 
 
 
-})
-//();
+})();
 
-/*
+
 (function(message) {
 
 	console.log(message);
@@ -187,8 +177,6 @@ console.log(f);
 
 f();
 */
-
-/*
 
 var f = changeValue(x, 'a', 1);
 
