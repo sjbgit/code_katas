@@ -1,14 +1,48 @@
 var Promise = require('bluebird');
 
 
+var pt = require('./testp');
+
+pt.output();
+
+console.log(pt);
+
+
+pt.promise.then(function(input) {
+  console.log('from pt promise: ' + input);
+});
+
+pt.doSomething('xxx');
+
+
+function testPromise() {
+
+    return new Promise(function(resolve, reject) {
+        //reject(new Error("Rejected error"))
+      //  resolve('test resolve');
+      //throw new Error;
+
+      //if reolve, these "then" will get called
+     }).then(function(result) {
+        console.log('Result 1 ' + result);
+        return result;
+    }).then(function(result) {
+        console.log('Result 2 ' + result)
+        return result;
+    });
+
+}
+
+
+testPromise()
+.then(function(finalResult){console.log("Final result " + finalResult)})
+.error(function(e){console.log("Error handler " + e)}) //reject(new Error("Rejected error"))
+.catch(function(e){console.log("Catch handler " + e)}); //throw new Error;
 
 
 
 
-
-
-
-
+/*
 
 
 // EXAMPLE 1
@@ -132,3 +166,5 @@ var someOtherPromise =
 new Promise(function(resolve, reject){
   resolve('some other promise!');
 });
+
+*/
