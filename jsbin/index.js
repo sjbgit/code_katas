@@ -16,3 +16,16 @@ function divideBy2(decNumber) {
 }
 
 console.log(divideBy2(13));
+
+
+
+var x = [];
+
+x.unshift(1);
+x.unshift(2);
+
+console.log(x);
+
+console.log(x.pop())
+
+console.log(x);
