@@ -14,3 +14,9 @@ var x = {
 var keys = Object.keys(x);
 
 console.log(fs);
+
+
+fs.writeFile('message.txt', 'Hello Node sdfsd', function (err) {
+  if (err) throw err;
+  console.log('It\'s saved!');
+});
